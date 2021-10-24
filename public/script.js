@@ -52,7 +52,7 @@ myPeer.on("open", (id) => {
 });
 function close_window() {
   if (confirm("Leave Meeting?")) {
-    window.location.replace("http://localhost:3030/");
+    window.location.replace("https://inside-stream.herokuapp.com/");
   }
 }
 function connectToNewUser(userId, stream) {
