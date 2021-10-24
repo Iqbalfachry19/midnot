@@ -4,7 +4,7 @@ const myPeer = new Peer(undefined, {
   path: "/peerjs",
   secure: true,
   host: "inside-stream.herokuapp.com/",
-  port: "3030",
+  port: "443",
 });
 let myVideoStream;
 const myVideo = document.createElement("video");
