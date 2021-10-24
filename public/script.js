@@ -2,6 +2,7 @@ const socket = io("/");
 const videoGrid = document.getElementById("video-grid");
 const myPeer = new Peer(undefined, {
   path: "/peerjs",
+  secure: true,
   host: "inside-stream.herokuapp.com/",
   port: "3030",
 });
