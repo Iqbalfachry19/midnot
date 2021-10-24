@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <link rel="shortcut icon" type="image/x-icon" href="Screenshot_4.png" />
+    <title>Inside</title>
+
+    <script src="main.js"></script>
+  </head>
+  <body>
+    <div class="form">
+    <div class="container">
+    <image src="../Screenshot_3.png" class="img">
+    </div>
+    </div>
+    <form class="form" method="get" action="/create">
+      <div class="container">
+        <h1 class="text">Buat Room</h1>
+        <button class="btn_create" type="submit">Buat Room</button>
+      </div>
+    </form>
+    <form class="form" method="post" action="/join">
+      <div class="container">
+        <h1 class="text">Join Room</h1>
+        <label class="label" for="meeting">ID Meeting</label>
+        <input
+          class="input"
+          name="meeting"
+          id="meeting"
+          type="text"
+          placeholder="Masukkan ID Meeting"
+        />
+
+        <button class="button btn_disabled" type="submit" id="start_button">
+          Gabung Room
+        </button>
+      </div>
+    </form>
+  </body>
+</html>
