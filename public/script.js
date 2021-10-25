@@ -5,6 +5,12 @@ const myPeer = new Peer(undefined, {
   secure: true,
   host: "inside-stream.herokuapp.com",
   port: "443",
+  config: {
+    iceServers: [
+      { url: "stun:stun.l.google.com:19302" },
+      { url: "turn:homeo@turn.bistri.com:80", credential: "homeo" },
+    ],
+  },
 });
 let myVideoStream;
 const myVideo = document.createElement("video");
