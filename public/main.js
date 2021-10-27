@@ -1,10 +1,10 @@
 document.addEventListener("DOMContentLoaded", function (event) {
   document.querySelector(".button").disabled = true;
 
-  document.querySelector(".input").addEventListener("change", stateHandle);
+  document.querySelector(".input").addEventListener("keyup", stateHandle);
 });
-function stateHandle() {
-  if (document.querySelector(".input").value === "") {
+function stateHandle(event) {
+  if (event.target.value === "") {
     document.querySelector(".button").disabled = true;
     document.querySelector(".button").classList.remove("btn_join");
     document.querySelector(".button").classList.add("btn_disabled");
