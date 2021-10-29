@@ -52,7 +52,12 @@ app.post("/join", (req, res) => {
   }
 });
 app.get("/:room", (req, res) => {
-  res.render("room", { roomId: req.params.room });
+  if (validate(req.params.room) === true) {
+    res.render("room", { roomId: req.params.room });
+  } else {
+    req.flash("message", "ID Room Salah");
+    res.redirect("/");
+  }
 });
 
 io.on("connection", (socket) => {
