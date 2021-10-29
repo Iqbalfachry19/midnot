@@ -5,12 +5,22 @@ app.use(cors());
 const server = require("http").Server(app);
 const io = require("socket.io")(server);
 const bodyParser = require("body-parser");
-
+const session = require("express-session");
+const flash = require("connect-flash");
 const { ExpressPeerServer } = require("peer");
+app.use(
+  session({
+    secret: "secret key",
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+
+app.use(flash());
 const peerServer = ExpressPeerServer(server, {
   debug: true,
 });
-const { v4: uuidV4 } = require("uuid");
+const { v4: uuidV4, validate } = require("uuid");
 app.use(bodyParser.json()).use(
   bodyParser.urlencoded({
     extended: true,
@@ -24,14 +34,22 @@ app.get("/create", (req, res) => {
   res.redirect(`/${uuidV4()}`);
 });
 app.get("/", (req, res) => {
-  res.render("join");
+  res.render("join", { message: req.flash("message") });
 });
+
 app.get("/close", (req, res) => {
   res.redirect(`/`);
 });
+
 app.post("/join", (req, res) => {
   const { meeting } = req.body;
-  res.redirect(`/${meeting}`);
+
+  if (validate(meeting) === true) {
+    res.redirect(`/${meeting}`);
+  } else {
+    req.flash("message", "ID Room Salah");
+    res.redirect("/");
+  }
 });
 app.get("/:room", (req, res) => {
   res.render("room", { roomId: req.params.room });

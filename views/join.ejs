@@ -34,10 +34,13 @@
           type="text"
           placeholder="Masukkan ID Meeting"
         />
-
+        <% if (message) { %>
+          <div style="color:red" ><%= message %></div>
+      <% } %>
         <button class="button btn_disabled" type="submit" id="start_button">
           Gabung Room
         </button>
+        
       </div>
     </form>
   </body>
