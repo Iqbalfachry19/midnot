@@ -52,6 +52,9 @@ navigator.mediaDevices
       $("ul").append(`<li class="message"><b>user</b><br/>${message}</li>`);
       scrollToBottom();
     });
+  })
+  .catch((error) => {
+    console.log(error);
   });
 
 socket.on("user-disconnected", (userId) => {
