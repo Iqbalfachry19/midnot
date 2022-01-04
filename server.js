@@ -17,8 +17,8 @@ app.post("/notification", (req, res) => {
   // Create Core API / Snap instance (both have shared `transactions` methods)
   let apiClient = new midtransClient.Snap({
     isProduction: false,
-    serverKey: NEXT_PUBLIC_MIDTRANS_SERVER_KEY,
-    clientKey: NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
+    serverKey: process.env.NEXT_PUBLIC_MIDTRANS_SERVER_KEY,
+    clientKey: process.env.NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
   });
   let notificationJson = req.body;
   apiClient.transaction
