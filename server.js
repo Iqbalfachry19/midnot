@@ -2,78 +2,59 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 app.use(cors());
-const server = require("http").Server(app);
-const io = require("socket.io")(server);
-const bodyParser = require("body-parser");
-const session = require("express-session");
-const flash = require("connect-flash");
-const { ExpressPeerServer } = require("peer");
-app.use(
-  session({
-    secret: "secret key",
-    resave: false,
-    saveUninitialized: false,
-  })
-);
+const midtransClient = require("midtrans-client");
 
-app.use(flash());
-const peerServer = ExpressPeerServer(server, {
-  debug: true,
-});
+const bodyParser = require("body-parser");
+
 const { v4: uuidV4, validate } = require("uuid");
 app.use(bodyParser.json()).use(
   bodyParser.urlencoded({
     extended: true,
   })
 );
-app.use("/peerjs", peerServer);
 
-app.set("view engine", "ejs");
-app.use(express.static("public"));
-app.get("/create", (req, res) => {
-  res.redirect(`/${uuidV4()}`);
-});
-app.get("/", (req, res) => {
-  res.render("join", { message: req.flash("message") });
-});
-
-app.get("/close", (req, res) => {
-  res.redirect(`/`);
-});
-
-app.post("/join", (req, res) => {
-  const { meeting } = req.body;
-
-  if (validate(meeting) === true) {
-    res.redirect(`/${meeting}`);
-  } else {
-    req.flash("message", "ID Room Salah");
-    res.redirect("/");
-  }
-});
-app.get("/:room", (req, res) => {
-  if (validate(req.params.room) === true) {
-    res.render("room", { roomId: req.params.room });
-  } else {
-    req.flash("message", "ID Room Salah");
-    res.redirect("/");
-  }
-});
-
-io.on("connection", (socket) => {
-  socket.on("join-room", (roomId, userId) => {
-    socket.join(roomId);
-    socket.to(roomId).broadcast.emit("user-connected", userId);
-    // messages
-    socket.on("message", (message) => {
-      //send message to the same room
-      io.to(roomId).emit("createMessage", message);
-    });
-
-    socket.on("disconnect", () => {
-      socket.to(roomId).broadcast.emit("user-disconnected", userId);
-    });
+app.post("/notification", (req, res) => {
+  // Create Core API / Snap instance (both have shared `transactions` methods)
+  let apiClient = new midtransClient.Snap({
+    isProduction: false,
+    serverKey: NEXT_PUBLIC_MIDTRANS_SERVER_KEY,
+    clientKey: NEXT_PUBLIC_MIDTRANS_CLIENT_KEY,
   });
+  let notificationJson = req.body;
+  apiClient.transaction
+    .notification(notificationJson)
+    .then((statusResponse) => {
+      let orderId = statusResponse.order_id;
+      let transactionStatus = statusResponse.transaction_status;
+      let fraudStatus = statusResponse.fraud_status;
+
+      console.log(
+        `Transaction notification received. Order ID: ${orderId}. Transaction status: ${transactionStatus}. Fraud status: ${fraudStatus}`
+      );
+
+      // Sample transactionStatus handling logic
+
+      if (transactionStatus == "capture") {
+        // capture only applies to card transaction, which you need to check for the fraudStatus
+        if (fraudStatus == "challenge") {
+          // TODO set transaction status on your databaase to 'challenge'
+        } else if (fraudStatus == "accept") {
+          // TODO set transaction status on your databaase to 'success'
+        }
+      } else if (transactionStatus == "settlement") {
+        // TODO set transaction status on your databaase to 'success'
+      } else if (transactionStatus == "deny") {
+        // TODO you can ignore 'deny', because most of the time it allows payment retries
+        // and later can become success
+      } else if (
+        transactionStatus == "cancel" ||
+        transactionStatus == "expire"
+      ) {
+        // TODO set transaction status on your databaase to 'failure'
+      } else if (transactionStatus == "pending") {
+        // TODO set transaction status on your databaase to 'pending' / waiting payment
+      }
+    });
 });
 
 server.listen(process.env.PORT || 3030);
