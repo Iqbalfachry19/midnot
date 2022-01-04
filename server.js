@@ -56,5 +56,4 @@ app.post("/notification", (req, res) => {
       }
     });
 });
-
-server.listen(process.env.PORT || 3030);
+app.listen(process.env.PORT || 3030);
